@@ -55,3 +55,25 @@ _Avoid_: Success, done
 ## Freeform Classifier (separate page)
 
 `freeform.html` is a self-contained second demo, linked from the main page but not part of the shared gate/view state (see ADR-0005). It reuses the term **Perceptron** above, and has a single unified interaction (no Manual/Training mode split, unlike the main app): weight/bias sliders are always live, and clicking the plane always places a **Freeform point** — an (x, y) coordinate on a continuous plane labeled Class A or B — which is added directly to the training set. Its **Preset dataset** loads a ready-made separable or non-separable set of freeform points, standing in for the Gate concept on this page. These terms only apply within `freeform.html` and should not be conflated with the Gate/Truth table/Plane vocabulary above.
+
+## XOR Network (separate page)
+
+`xor-network.html` is a third self-contained demo, linked from the main page, showing why XOR needs more than one Perceptron. It introduces its own vocabulary, scoped to this page only:
+
+**Network**:
+Several Perceptrons wired together — 2 inputs, a fixed hidden layer of 2 **Hidden neurons**, and 1 **Output neuron** — all using the same weighted-sum + step activation as the single Perceptron elsewhere in this project. There is no training here: weights and biases are adjusted only via sliders (see ADR-0006).
+_Avoid_: Model, brain (the main Perceptron entry's "avoid: network" does not apply on this page — here "Network" is the whole point)
+
+**Hidden neuron**:
+One of the Network's 2 fixed intermediate Perceptrons. Its output feeds the Output neuron rather than being read directly. The hidden layer's size is fixed at 2 and is not adjustable on this page.
+_Avoid_: Node, unit
+
+**Output neuron**:
+The Network's final Perceptron, whose output is the Network's overall prediction for the current row.
+_Avoid_: Final layer, result neuron
+
+**Solution**:
+The pre-loaded, hand-crafted set of weights/biases for all 3 neurons that correctly solves XOR on all 4 rows. The page loads with the Solution active; a "Reset to solution" action restores it after the presenter has perturbed sliders away from it.
+_Avoid_: Preset, answer, correct weights
+
+This page is always fixed to XOR — it has no Gate selector, unlike the main app.

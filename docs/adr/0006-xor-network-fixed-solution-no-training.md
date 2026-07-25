@@ -1,0 +1,7 @@
+# XOR Network page uses a fixed hand-crafted Solution, not training
+
+Every other page in this project (the main gate demo, the freeform classifier) demonstrates learning live: the presenter runs Step/Run and watches weights update via the perceptron learning rule. The XOR Network page deliberately does not — its 3 neurons (2 Hidden neurons + 1 Output neuron) always compute via manual weight/bias sliders only, loaded at start with a known-good hand-crafted Solution (a classic OR/NAND hidden layer feeding an AND output neuron), with a "Reset to solution" action to restore it.
+
+We considered making this Network trainable via gradient descent/backpropagation, which would have been the more "realistic" story and a natural next step after the single Perceptron's training mode. We rejected it because it requires swapping every neuron's step activation for a differentiable one (e.g. sigmoid), which would have made this page's neurons behave differently from the Perceptron used everywhere else in the project, and because implementing/explaining backpropagation is a substantially larger scope than this page's stated purpose: showing *that* a small fixed network of step-activation Perceptrons can solve XOR, not *how* one learns to.
+
+The cost is that this page cannot demonstrate learning — only forward-pass computation and manual weight exploration. If a future need arises to demonstrate backpropagation itself, that should be a fourth, separate page rather than a retrofit of this one, since it would need a different neuron model throughout.

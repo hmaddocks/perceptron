@@ -1,0 +1,118 @@
+.back-link {
+  display: block;
+  padding: 10px 16px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-bg);
+}
+.back-link:hover {
+  color: var(--ink);
+}
+
+.app-header {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+}
+
+#app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 24px 64px;
+}
+
+.network-app {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.network-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.network-sidebar {
+  width: 300px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.diagram-wrap {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px;
+}
+.diagram-wrap svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.truth-table td.correct {
+  color: var(--correct);
+  font-weight: 700;
+}
+.truth-table td.misclassified {
+  color: var(--incorrect);
+  font-weight: 700;
+}
+.truth-table tr {
+  cursor: pointer;
+}
+.truth-table tr.active {
+  background: #fef9c3;
+}
+
+/* --- Network diagram (SVG) --- */
+.network-edge {
+  stroke: var(--muted);
+  stroke-width: 1.5;
+}
+.network-edge-label {
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  fill: var(--ink);
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 4;
+}
+
+.network-node {
+  stroke: var(--border);
+  stroke-width: 2;
+  fill: var(--panel-bg);
+}
+.network-node.input {
+  fill: #e5e7eb;
+}
+.network-node.active {
+  fill: #2563eb;
+  stroke: #1d4ed8;
+}
+
+.network-node-label {
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.network-node-value {
+  font-size: 15px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.network-bias-label {
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  fill: var(--muted);
+  text-anchor: middle;
+}
