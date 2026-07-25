@@ -46,11 +46,6 @@ const TEMPLATE = `
           </div>
 
           <h2>Learning</h2>
-          <label class="va-slider-row">
-            <span>Rate</span>
-            <input data-role="lr-slider" type="range" min="0.01" max="1" step="0.01" />
-            <span data-role="lr-value" class="va-value"></span>
-          </label>
           <div class="va-buttons">
             <button data-role="step-btn">Step Epoch</button>
             <button data-role="run-btn">Run</button>

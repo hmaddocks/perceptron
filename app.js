@@ -5,13 +5,13 @@ import { mountSiteNav } from "./nav.js";
 mountSiteNav("index.html");
 
 const RUN_INTERVAL_MS = 500;
+const LEARNING_RATE = 0.1;
 
 const state = {
   gate: "AND",
   mode: "manual",
   view: "table",
   perceptron: new Perceptron(),
-  learningRate: 0.1,
   epoch: 0,
   rowCursor: 0,
   misclassifiedInEpoch: 0,
@@ -69,7 +69,7 @@ function stepOnce() {
   if (state.converged || state.epoch >= EPOCH_CAP) return;
 
   const row = rows[state.rowCursor];
-  const { error } = state.perceptron.applyRow(row, state.learningRate);
+  const { error } = state.perceptron.applyRow(row, LEARNING_RATE);
   state.lastRowIndex = state.rowCursor;
   if (error !== 0) state.misclassifiedInEpoch++;
 
@@ -128,12 +128,6 @@ qa("w2-slider").forEach((el) =>
 qa("bias-slider").forEach((el) =>
   el.addEventListener("input", (e) => {
     state.perceptron.bias = Number(e.target.value);
-    render();
-  })
-);
-qa("lr-slider").forEach((el) =>
-  el.addEventListener("input", (e) => {
-    state.learningRate = Number(e.target.value);
     render();
   })
 );
@@ -207,8 +201,6 @@ function render() {
   qa("w2-value").forEach((el) => (el.textContent = fmt(state.perceptron.w2)));
   qa("bias-value").forEach((el) => (el.textContent = fmt(state.perceptron.bias)));
 
-  qa("lr-slider").forEach((el) => (el.value = state.learningRate));
-  qa("lr-value").forEach((el) => (el.textContent = fmt(state.learningRate)));
   qa("epoch-count").forEach((el) => (el.textContent = state.epoch));
   qa("run-btn").forEach((el) => (el.textContent = state.running ? "Pause" : "Run"));
   qa("status").forEach((el) => (el.textContent = statusText()));

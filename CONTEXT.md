@@ -45,7 +45,7 @@ An interaction mode where the presenter runs the perceptron learning algorithm â
 _Avoid_: Learning mode, practice mode
 
 **Learning rate**:
-A presenter-adjustable value controlling how large a weight correction is applied per misclassified row during Training mode.
+A value controlling how large a weight correction is applied per misclassified row during Training mode. Fixed at 0.10 everywhere it's used (Gate demo and Freeform Classifier) â€” not presenter-adjustable.
 _Avoid_: Step size, alpha
 
 **Epoch**:

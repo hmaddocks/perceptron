@@ -3,6 +3,7 @@ import { CLASS_A, CLASS_B, PRESET_SEPARABLE, PRESET_NON_SEPARABLE } from "./free
 import { renderPlane, eventToDomain, clampToActiveRegion } from "./freeform-plane.js";
 
 const RUN_INTERVAL_MS = 60;
+const LEARNING_RATE = 0.1;
 
 // Freeform starts from small random weights (rather than the gate demo's
 // zero-init) so there's visible work for Training mode to do immediately.
@@ -21,7 +22,6 @@ export function createController(root) {
     perceptron: randomStartingPerceptron(),
     points: [],
     currentClass: CLASS_A,
-    learningRate: 0.1,
     epoch: 0,
     pointCursor: 0,
     misclassifiedInEpoch: 0,
@@ -48,7 +48,7 @@ export function createController(root) {
   function applyOnePoint() {
     if (state.converged || state.points.length === 0 || state.epoch >= EPOCH_CAP) return false;
     const point = state.points[state.pointCursor];
-    const { pred, error } = state.perceptron.applyPoint(point, state.learningRate);
+    const { pred, error } = state.perceptron.applyPoint(point, LEARNING_RATE);
     state.lastComputation = { point, pred, error };
     if (error !== 0) state.misclassifiedInEpoch++;
 
@@ -155,12 +155,6 @@ export function createController(root) {
     });
   });
 
-  // --- Learning rate ---
-  q("lr-slider")?.addEventListener("input", (e) => {
-    state.learningRate = Number(e.target.value);
-    render();
-  });
-
   // --- Training controls ---
   q("step-btn")?.addEventListener("click", stepEpoch);
   q("run-btn")?.addEventListener("click", toggleRun);
@@ -189,8 +183,6 @@ export function createController(root) {
     if (q("w1-value")) q("w1-value").textContent = fmt(state.perceptron.w1);
     if (q("w2-value")) q("w2-value").textContent = fmt(state.perceptron.w2);
     if (q("bias-value")) q("bias-value").textContent = fmt(state.perceptron.bias);
-    if (q("lr-slider")) q("lr-slider").value = state.learningRate;
-    if (q("lr-value")) q("lr-value").textContent = fmt(state.learningRate);
     if (q("epoch-count")) q("epoch-count").textContent = state.epoch;
 
     // Class toggle active state
