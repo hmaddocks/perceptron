@@ -1,0 +1,184 @@
+:root {
+  --ink: #1a1a1a;
+  --muted: #6b7280;
+  --bg: #f5f5f4;
+  --panel-bg: #ffffff;
+  --border: #e5e7eb;
+  --correct: #16a34a;
+  --incorrect: #dc2626;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.gate-selector,
+.mode-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.gate-selector button,
+.mode-tabs button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.gate-selector button.active,
+.mode-tabs button.active {
+  background: var(--ink);
+  color: white;
+}
+
+.truth-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+.truth-table th,
+.truth-table td {
+  padding: 10px 14px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.truth-table th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  background: var(--bg);
+}
+.truth-table tr:last-child td {
+  border-bottom: none;
+}
+.truth-table tr.active-row {
+  background: #fef9c3;
+}
+.calculation {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.calc-sum {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.check.correct {
+  color: var(--correct);
+  font-weight: 600;
+}
+.check.incorrect {
+  color: var(--incorrect);
+  font-weight: 600;
+}
+
+.status {
+  margin: 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+.panel h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.slider-row {
+  display: grid;
+  grid-template-columns: 48px 1fr 56px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.slider-row:last-of-type {
+  margin-bottom: 0;
+}
+.value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.buttons button {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+.buttons button:hover {
+  background: var(--border);
+}
+
+.epoch {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Mode visibility — weights/bias sliders stay visible in both modes so
+   the presenter can watch them move as Training mode learns. */
+body[data-mode="manual"] #training-panel {
+  display: none;
+}

@@ -1,6 +1,6 @@
 # Perceptron Demo
 
-An interactive, educational web simulation of a single perceptron (Rosenblatt model), used to demonstrate to an audience how a perceptron computes its output.
+An interactive, educational web simulation of a single perceptron (Rosenblatt model), used to demonstrate to an audience how a perceptron implements a 2-input logic gate.
 
 ## Language
 
@@ -8,46 +8,34 @@ An interactive, educational web simulation of a single perceptron (Rosenblatt mo
 A single artificial neuron with 2 numeric inputs, one weight per input, a bias, a weighted-sum step, and a step activation function producing a binary output (0 or 1). This project models exactly one perceptron — not a multi-layer network.
 _Avoid_: Neuron, node, unit (when referring to the whole model), network
 
-**Input space**:
-The 2D plane (x, y) that the perceptron's two inputs are plotted on. Every point in the input space maps to a class via the decision boundary.
-_Avoid_: Feature space, coordinate grid
+**Gate**:
+The 2-input binary logic function currently being demonstrated — AND, OR, NAND, NOR, or XOR. Selecting a gate fixes the "expected" column of the truth table. AND/OR/NAND/NOR are linearly separable and Training mode converges on them; XOR is not, and is included deliberately to demonstrate that limitation.
+_Avoid_: Preset, dataset, function
 
-**Decision boundary**:
-The straight line in the input space where the perceptron's weighted sum equals zero — the dividing line between the two output classes.
-_Avoid_: Separating line, threshold line
+**Truth table**:
+The always-visible table of all 4 possible input combinations — (0,0), (0,1), (1,0), (1,1) — each shown as a row with its expected output (from the selected Gate), the perceptron's current weighted sum, and its actual output. Replaces a geometric/plane visualization by deliberate choice (see ADR-0003).
+_Avoid_: Input space, plane, grid
+
+**Row**:
+One of the 4 fixed input combinations in the truth table.
+_Avoid_: Point, entry, case
 
 **Manual mode**:
-An interaction mode where the presenter directly sets weights and bias (e.g. via sliders) and/or drags a single test point, observing the decision boundary and output update live. No learning occurs in this mode.
+An interaction mode where the presenter directly sets weights and bias via sliders, observing the sum/actual columns of the truth table update live for all 4 rows. No learning occurs in this mode.
 _Avoid_: Explore mode, sandbox mode
 
 **Training mode**:
-An interaction mode where the presenter places labeled training points on the input space, then runs the perceptron learning algorithm, watching the decision boundary converge over successive epochs.
+An interaction mode where the presenter runs the perceptron learning algorithm — via Step or Run — over the truth table's 4 rows for the selected Gate, watching weights update and the actual column converge toward the expected column over successive epochs.
 _Avoid_: Learning mode, practice mode
 
-**Computation view**:
-A live diagram showing the perceptron's arithmetic for the current/selected point: each input multiplied by its weight, summed with the bias, then passed through the step function to produce the output. Updates in real time alongside the input-space plot.
-_Avoid_: Network diagram, node graph
-
 **Learning rate**:
-A presenter-adjustable value controlling how large a weight correction is applied per misclassified training point during Training mode.
+A presenter-adjustable value controlling how large a weight correction is applied per misclassified row during Training mode.
 _Avoid_: Step size, alpha
 
-**Class**:
-The label (A or B, corresponding to output 0 or 1) assigned to a training point when it is placed, and to the current-class toggle used to place new points.
-_Avoid_: Category, group, tag
-
-**Preset dataset**:
-A one-click, pre-defined set of labeled training points loaded into Training mode, used to jump straight into a demo. Includes at least one linearly-separable example and one non-separable example.
-_Avoid_: Sample data, template
-
 **Epoch**:
-One full pass of the perceptron learning algorithm over every training point, applying a weight update for each misclassified point. Training mode is capped at a fixed maximum number of epochs.
+One full pass of the perceptron learning algorithm over all 4 rows of the truth table, applying a weight update for each misclassified row. Training mode is capped at a fixed maximum number of epochs.
 _Avoid_: Iteration, pass, generation
 
 **Convergence**:
-The state Training mode reaches when every training point is correctly classified and no further weight updates occur. Non-separable data never converges and instead stops at the epoch cap.
+The state Training mode reaches when every row's actual output matches its expected output and no further weight updates occur. XOR never converges and instead stops at the epoch cap.
 _Avoid_: Success, done
-
-**Test point**:
-The single draggable marker shown only in Manual mode, used to probe the current decision boundary and see its classification and computation view update live. Distinct from training points — it is never used to update weights.
-_Avoid_: Probe, cursor point, sample point
