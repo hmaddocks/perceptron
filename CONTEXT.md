@@ -51,3 +51,7 @@ _Avoid_: Iteration, pass, generation
 **Convergence**:
 The state Training mode reaches when every row's actual output matches its expected output and no further weight updates occur. XOR never converges and instead stops at the epoch cap.
 _Avoid_: Success, done
+
+## Freeform Classifier (separate page)
+
+`freeform.html` is a self-contained second demo, linked from the main page but not part of the shared gate/view state (see ADR-0005). It reuses the term **Perceptron** above, but its **Manual mode**/**Training mode** operate on a **Freeform point** — an (x, y) coordinate placed anywhere on a continuous plane and labeled Class A or B — rather than the fixed 4-row truth table. Its **Preset dataset** loads a ready-made separable or non-separable set of freeform points, standing in for the Gate concept on this page. These terms only apply within `freeform.html` and should not be conflated with the Gate/Truth table/Plane vocabulary above.

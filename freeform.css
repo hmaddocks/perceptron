@@ -1,0 +1,262 @@
+:root {
+  --class-a: #2563eb;
+  --class-b: #dc2626;
+  --ink: #1a1a1a;
+  --muted: #6b7280;
+  --bg: #f5f5f4;
+  --panel-bg: #ffffff;
+  --border: #e5e7eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.back-link {
+  flex: none;
+  display: block;
+  padding: 10px 16px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-bg);
+}
+.back-link:hover {
+  color: var(--ink);
+}
+
+#app {
+  flex: 1;
+  min-height: 0;
+}
+
+/* --- Generic mode-visibility mechanism --- */
+[data-mode="manual"] [data-training-only] {
+  display: none !important;
+}
+[data-mode="training"] [data-manual-only] {
+  display: none !important;
+}
+
+/* --- Plane (SVG) --- */
+svg[data-role="plane"] {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--panel-bg);
+}
+
+.plane-active-region {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.plane-axis {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.plane-boundary {
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.plane-point {
+  stroke: white;
+  stroke-width: 1.5;
+}
+.plane-point.class-a {
+  fill: var(--class-a);
+}
+.plane-point.class-b {
+  fill: var(--class-b);
+}
+
+.plane-test-point {
+  fill: #f59e0b;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+/* ============================================================
+   Side-by-side dashboard layout (ported from prototype Variant A)
+   ============================================================ */
+.variant-a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.va-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-bg);
+}
+.va-header h1 {
+  font-size: 18px;
+  margin: 0;
+}
+.va-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.va-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  min-height: 0;
+}
+
+.va-plane-col {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+.va-plane-col svg {
+  max-width: 640px;
+  max-height: 640px;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--border);
+}
+
+.va-sidebar {
+  border-left: 1px solid var(--border);
+  background: var(--panel-bg);
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.va-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 4px;
+}
+.va-tab {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.va-tab.active {
+  background: var(--panel-bg);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.va-panel h2,
+.va-computation h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.va-slider-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 48px;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.va-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.va-class-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.class-a-btn,
+.class-b-btn {
+  flex: 1;
+  padding: 8px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-bg);
+}
+.class-a-btn {
+  color: var(--class-a);
+}
+.class-b-btn {
+  color: var(--class-b);
+}
+.class-a-btn.active {
+  border-color: var(--class-a);
+  background: color-mix(in srgb, var(--class-a) 12%, white);
+}
+.class-b-btn.active {
+  border-color: var(--class-b);
+  background: color-mix(in srgb, var(--class-b) 12%, white);
+}
+
+.va-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.va-buttons button {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-bg);
+  font-size: 13px;
+}
+.va-buttons button:hover {
+  background: var(--bg);
+}
+
+.va-epoch {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.va-computation {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.va-formula {
+  font-variant-numeric: tabular-nums;
+}
