@@ -187,6 +187,27 @@ button {
   color: var(--muted);
 }
 
+.training-indicator {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.training-indicator.running {
+  color: var(--correct);
+  animation: training-pulse 1s ease-in-out infinite;
+}
+
+@keyframes training-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
 /* Mode visibility — weights/bias sliders stay visible in both modes so
    the presenter can watch them move as Training mode learns. */
 body[data-mode="manual"] [data-role="training-panel"] {

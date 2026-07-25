@@ -215,6 +215,12 @@ export function createController(root) {
 
     if (q("status")) q("status").textContent = statusText();
 
+    const indicator = q("training-indicator");
+    if (indicator) {
+      indicator.textContent = state.running ? "● Training…" : "■ Stopped";
+      indicator.classList.toggle("running", state.running);
+    }
+
     // Computation view values: manual mode shows the live test point,
     // training mode shows the most recently processed training point.
     let calc;

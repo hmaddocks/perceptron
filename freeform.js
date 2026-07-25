@@ -59,6 +59,7 @@ const TEMPLATE = `
             <button data-role="reset-btn">Reset</button>
           </div>
           <p class="va-epoch">Epoch <span data-role="epoch-count"></span></p>
+          <p data-role="training-indicator" class="training-indicator"></p>
         </section>
 
         <section class="va-computation">

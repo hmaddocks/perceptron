@@ -209,6 +209,10 @@ function render() {
   qa("epoch-count").forEach((el) => (el.textContent = state.epoch));
   qa("run-btn").forEach((el) => (el.textContent = state.running ? "Pause" : "Run"));
   qa("status").forEach((el) => (el.textContent = statusText()));
+  qa("training-indicator").forEach((el) => {
+    el.textContent = state.running ? "● Training…" : "■ Stopped";
+    el.classList.toggle("running", state.running);
+  });
 
   renderTable();
   renderPlaneView();

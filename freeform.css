@@ -6,6 +6,7 @@
   --bg: #f5f5f4;
   --panel-bg: #ffffff;
   --border: #e5e7eb;
+  --correct: #16a34a;
 }
 
 * {
@@ -50,11 +51,10 @@ button {
   min-height: 0;
 }
 
-/* --- Generic mode-visibility mechanism --- */
+/* --- Generic mode-visibility mechanism — weights/bias sliders (data-manual-only)
+   stay visible in both modes so the presenter can watch them move as
+   Training mode learns. --- */
 [data-mode="manual"] [data-training-only] {
-  display: none !important;
-}
-[data-mode="training"] [data-manual-only] {
   display: none !important;
 }
 
@@ -251,6 +251,27 @@ svg[data-role="plane"] {
   font-size: 13px;
   color: var(--muted);
   margin: 0;
+}
+
+.training-indicator {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.training-indicator.running {
+  color: var(--correct);
+  animation: training-pulse 1s ease-in-out infinite;
+}
+
+@keyframes training-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .va-computation {
