@@ -1,0 +1,3 @@
+# Manual mode and Training mode share one perceptron state
+
+Manual mode (slider-driven weights/bias) and Training mode (learning-algorithm-driven weights/bias) could have kept independent state, resetting on entry to each mode. We decided they operate on a single shared perceptron state instead: switching modes carries the current weights and bias over. This was chosen deliberately to reinforce the narrative that it's one continuous perceptron being viewed two ways, at the cost of mode transitions having side effects (e.g. leaving Training mode mid-run and switching to Manual mode shows sliders at whatever weights training had reached, not defaults).
