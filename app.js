@@ -1,10 +1,12 @@
 import { Perceptron, GATES, EPOCH_CAP } from "./perceptron.js";
+import { renderPlane } from "./plane.js";
 
 const RUN_INTERVAL_MS = 500;
 
 const state = {
   gate: "AND",
   mode: "manual",
+  view: "table",
   perceptron: new Perceptron(),
   learningRate: 0.1,
   epoch: 0,
@@ -18,27 +20,12 @@ const state = {
 
 const fmt = (n) => Number(n).toFixed(2);
 
-const gateSelector = document.getElementById("gate-selector");
-const modeManualBtn = document.getElementById("mode-manual");
-const modeTrainingBtn = document.getElementById("mode-training");
-const manualPanel = document.getElementById("manual-panel");
-const trainingPanel = document.getElementById("training-panel");
+const qa = (role) => Array.from(document.querySelectorAll(`[data-role="${role}"]`));
+
+const viewTableBtn = document.getElementById("view-table-btn");
+const viewPlaneBtn = document.getElementById("view-plane-btn");
 const tableBody = document.getElementById("truth-table-body");
-const statusEl = document.getElementById("status");
-const epochEl = document.getElementById("epoch-count");
-
-const w1Slider = document.getElementById("w1-slider");
-const w2Slider = document.getElementById("w2-slider");
-const biasSlider = document.getElementById("bias-slider");
-const w1Value = document.getElementById("w1-value");
-const w2Value = document.getElementById("w2-value");
-const biasValue = document.getElementById("bias-value");
-
-const lrSlider = document.getElementById("lr-slider");
-const lrValue = document.getElementById("lr-value");
-const stepBtn = document.getElementById("step-btn");
-const runBtn = document.getElementById("run-btn");
-const resetBtn = document.getElementById("reset-btn");
+const planeSvg = document.getElementById("plane-svg");
 
 function stopRun() {
   if (state.intervalId !== null) {
@@ -54,6 +41,11 @@ function resetTrainingProgress() {
   state.misclassifiedInEpoch = 0;
   state.converged = false;
   state.lastRowIndex = null;
+}
+
+function setView(view) {
+  state.view = view;
+  render();
 }
 
 function setGate(gate) {
@@ -109,36 +101,46 @@ function reset() {
   render();
 }
 
-gateSelector.querySelectorAll("[data-gate]").forEach((btn) => {
+viewTableBtn.addEventListener("click", () => setView("table"));
+viewPlaneBtn.addEventListener("click", () => setView("plane"));
+
+qa("gate-btn").forEach((btn) => {
   btn.addEventListener("click", () => setGate(btn.dataset.gate));
 });
-modeManualBtn.addEventListener("click", () => setMode("manual"));
-modeTrainingBtn.addEventListener("click", () => setMode("training"));
+qa("mode-manual").forEach((btn) => btn.addEventListener("click", () => setMode("manual")));
+qa("mode-training").forEach((btn) => btn.addEventListener("click", () => setMode("training")));
 
-w1Slider.addEventListener("input", (e) => {
-  state.perceptron.w1 = Number(e.target.value);
-  render();
-});
-w2Slider.addEventListener("input", (e) => {
-  state.perceptron.w2 = Number(e.target.value);
-  render();
-});
-biasSlider.addEventListener("input", (e) => {
-  state.perceptron.bias = Number(e.target.value);
-  render();
-});
+qa("w1-slider").forEach((el) =>
+  el.addEventListener("input", (e) => {
+    state.perceptron.w1 = Number(e.target.value);
+    render();
+  })
+);
+qa("w2-slider").forEach((el) =>
+  el.addEventListener("input", (e) => {
+    state.perceptron.w2 = Number(e.target.value);
+    render();
+  })
+);
+qa("bias-slider").forEach((el) =>
+  el.addEventListener("input", (e) => {
+    state.perceptron.bias = Number(e.target.value);
+    render();
+  })
+);
+qa("lr-slider").forEach((el) =>
+  el.addEventListener("input", (e) => {
+    state.learningRate = Number(e.target.value);
+    render();
+  })
+);
 
-lrSlider.addEventListener("input", (e) => {
-  state.learningRate = Number(e.target.value);
-  render();
-});
-
-stepBtn.addEventListener("click", stepOnce);
-runBtn.addEventListener("click", toggleRun);
-resetBtn.addEventListener("click", reset);
+qa("step-btn").forEach((btn) => btn.addEventListener("click", stepOnce));
+qa("run-btn").forEach((btn) => btn.addEventListener("click", toggleRun));
+qa("reset-btn").forEach((btn) => btn.addEventListener("click", reset));
 
 function statusText() {
-  if (state.mode === "manual") return "Manual mode — adjust the sliders and watch the table update";
+  if (state.mode === "manual") return "Manual mode — adjust the sliders and watch it update";
   const rows = GATES[state.gate];
   if (state.converged) return `✓ Converged after ${state.epoch} epoch${state.epoch === 1 ? "" : "s"}`;
   if (state.epoch >= EPOCH_CAP) return `⚠ Stopped after ${EPOCH_CAP} epochs — ${state.gate} is not linearly separable`;
@@ -176,30 +178,40 @@ function renderTable() {
   });
 }
 
+function renderPlaneView() {
+  renderPlane(planeSvg, {
+    rows: GATES[state.gate],
+    perceptron: state.perceptron,
+    activeIndex: state.mode === "training" ? state.lastRowIndex : null,
+  });
+}
+
 function render() {
+  document.body.dataset.activeView = state.view;
   document.body.dataset.mode = state.mode;
 
-  gateSelector.querySelectorAll("[data-gate]").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.gate === state.gate);
-  });
-  modeManualBtn.classList.toggle("active", state.mode === "manual");
-  modeTrainingBtn.classList.toggle("active", state.mode === "training");
+  viewTableBtn.classList.toggle("active", state.view === "table");
+  viewPlaneBtn.classList.toggle("active", state.view === "plane");
 
-  w1Slider.value = state.perceptron.w1;
-  w2Slider.value = state.perceptron.w2;
-  biasSlider.value = state.perceptron.bias;
-  w1Value.textContent = fmt(state.perceptron.w1);
-  w2Value.textContent = fmt(state.perceptron.w2);
-  biasValue.textContent = fmt(state.perceptron.bias);
+  qa("gate-btn").forEach((btn) => btn.classList.toggle("active", btn.dataset.gate === state.gate));
+  qa("mode-manual").forEach((btn) => btn.classList.toggle("active", state.mode === "manual"));
+  qa("mode-training").forEach((btn) => btn.classList.toggle("active", state.mode === "training"));
 
-  lrSlider.value = state.learningRate;
-  lrValue.textContent = fmt(state.learningRate);
-  epochEl.textContent = state.epoch;
-  runBtn.textContent = state.running ? "Pause" : "Run";
+  qa("w1-slider").forEach((el) => (el.value = state.perceptron.w1));
+  qa("w2-slider").forEach((el) => (el.value = state.perceptron.w2));
+  qa("bias-slider").forEach((el) => (el.value = state.perceptron.bias));
+  qa("w1-value").forEach((el) => (el.textContent = fmt(state.perceptron.w1)));
+  qa("w2-value").forEach((el) => (el.textContent = fmt(state.perceptron.w2)));
+  qa("bias-value").forEach((el) => (el.textContent = fmt(state.perceptron.bias)));
 
-  statusEl.textContent = statusText();
+  qa("lr-slider").forEach((el) => (el.value = state.learningRate));
+  qa("lr-value").forEach((el) => (el.textContent = fmt(state.learningRate)));
+  qa("epoch-count").forEach((el) => (el.textContent = state.epoch));
+  qa("run-btn").forEach((el) => (el.textContent = state.running ? "Pause" : "Run"));
+  qa("status").forEach((el) => (el.textContent = statusText()));
 
   renderTable();
+  renderPlaneView();
 }
 
 render();

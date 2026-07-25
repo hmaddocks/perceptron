@@ -1,0 +1,3 @@
+# Plane view added back alongside the truth table
+
+ADR-0003 dropped the geometric plane in favor of a truth table, trading away the geometric intuition for directness. That intuition turned out to still be wanted, so we added it back as a second **View** rather than reverting the truth table: both views read from and write to the exact same shared perceptron/gate/mode state (no page reload, no reset), and each duplicates its own full set of controls (gate selector, mode tabs, sliders, step/run/reset) rather than hoisting one shared control panel — chosen so either view is fully self-contained for a presenter who's on one screen and not the other.

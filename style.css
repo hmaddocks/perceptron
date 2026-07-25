@@ -179,6 +179,101 @@ button {
 
 /* Mode visibility — weights/bias sliders stay visible in both modes so
    the presenter can watch them move as Training mode learns. */
-body[data-mode="manual"] #training-panel {
+body[data-mode="manual"] [data-role="training-panel"] {
   display: none;
+}
+
+/* View visibility — Table vs. Plane, both driven by the same shared state */
+body[data-active-view="table"] #plane-view {
+  display: none;
+}
+body[data-active-view="plane"] #table-view {
+  display: none;
+}
+
+.view-menu {
+  display: flex;
+  gap: 4px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+}
+.view-menu button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.view-menu button.active {
+  background: #2563eb;
+  color: white;
+}
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.plane-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+#plane-svg {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1;
+}
+
+.plane-active-region {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+
+.plane-boundary {
+  stroke: var(--ink);
+  stroke-width: 2.5;
+}
+
+.plane-point {
+  stroke: white;
+  stroke-width: 2;
+}
+.plane-point.class-a {
+  fill: #9ca3af;
+}
+.plane-point.class-b {
+  fill: #2563eb;
+}
+.plane-point.correct {
+  stroke: var(--correct);
+  stroke-width: 3;
+}
+.plane-point.misclassified {
+  stroke: var(--incorrect);
+  stroke-width: 3;
+}
+
+.plane-point-active-ring {
+  fill: none;
+  stroke: #f59e0b;
+  stroke-width: 3;
+}
+
+.plane-point-label {
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  fill: var(--muted);
+  text-anchor: middle;
 }

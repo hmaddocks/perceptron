@@ -12,12 +12,24 @@ _Avoid_: Neuron, node, unit (when referring to the whole model), network
 The 2-input binary logic function currently being demonstrated — AND, OR, NAND, NOR, or XOR. Selecting a gate fixes the "expected" column of the truth table. AND/OR/NAND/NOR are linearly separable and Training mode converges on them; XOR is not, and is included deliberately to demonstrate that limitation.
 _Avoid_: Preset, dataset, function
 
+**View**:
+One of two ways of visualizing the same shared perceptron/gate/training state — Truth table or Plane. Switching views via the top menu is instant and never resets the gate, weights, or training progress (see ADR-0004).
+_Avoid_: Page, tab, mode (mode means Manual/Training, a different axis)
+
 **Truth table**:
-The always-visible table of all 4 possible input combinations — (0,0), (0,1), (1,0), (1,1) — each shown as a row with its expected output (from the selected Gate), the perceptron's current weighted sum, and its actual output. Replaces a geometric/plane visualization by deliberate choice (see ADR-0003).
+A view showing all 4 possible input combinations — (0,0), (0,1), (1,0), (1,1) — as rows, each with its expected output (from the selected Gate), the perceptron's current weighted sum, and its actual output.
 _Avoid_: Input space, plane, grid
 
+**Plane**:
+A view plotting the same 4 input combinations geometrically on a 2D plane, each point colored by its expected output and ringed if misclassified, with the perceptron's decision boundary drawn through them.
+_Avoid_: Graph, chart, canvas
+
+**Decision boundary**:
+The straight line, shown in the Plane view, where the perceptron's weighted sum equals zero — the dividing line between the two output classes.
+_Avoid_: Separating line, threshold line
+
 **Row**:
-One of the 4 fixed input combinations in the truth table.
+One of the 4 fixed input combinations, shown as a table row in the Truth table view or a point in the Plane view.
 _Avoid_: Point, entry, case
 
 **Manual mode**:

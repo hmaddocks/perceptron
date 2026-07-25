@@ -5,74 +5,136 @@
     <title>Perceptron: Logic Gate Demo</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
+  <body data-active-view="table" data-mode="manual">
     <main class="app">
       <header class="app-header">
         <h1>Perceptron</h1>
         <p class="subtitle">A single neuron learning a 2-input logic gate</p>
       </header>
 
-      <div id="gate-selector" class="gate-selector">
-        <button data-gate="AND">AND</button>
-        <button data-gate="OR">OR</button>
-        <button data-gate="NAND">NAND</button>
-        <button data-gate="NOR">NOR</button>
-        <button data-gate="XOR">XOR</button>
-      </div>
+      <nav class="view-menu">
+        <button data-view="table" id="view-table-btn">Truth Table</button>
+        <button data-view="plane" id="view-plane-btn">Plane</button>
+      </nav>
 
-      <div class="mode-tabs">
-        <button id="mode-manual" class="mode-tab">Manual</button>
-        <button id="mode-training" class="mode-tab">Training</button>
-      </div>
+      <section id="table-view" class="view">
+        <div class="gate-selector" data-role="gate-selector">
+          <button data-role="gate-btn" data-gate="AND">AND</button>
+          <button data-role="gate-btn" data-gate="OR">OR</button>
+          <button data-role="gate-btn" data-gate="NAND">NAND</button>
+          <button data-role="gate-btn" data-gate="NOR">NOR</button>
+          <button data-role="gate-btn" data-gate="XOR">XOR</button>
+        </div>
 
-      <table class="truth-table">
-        <thead>
-          <tr>
-            <th>x1</th>
-            <th>x2</th>
-            <th>expected</th>
-            <th>sum</th>
-            <th>actual</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="truth-table-body"></tbody>
-      </table>
+        <div class="mode-tabs">
+          <button data-role="mode-manual" class="mode-tab">Manual</button>
+          <button data-role="mode-training" class="mode-tab">Training</button>
+        </div>
 
-      <p id="status" class="status"></p>
+        <table class="truth-table">
+          <thead>
+            <tr>
+              <th>x1</th>
+              <th>x2</th>
+              <th>expected</th>
+              <th>sum</th>
+              <th>actual</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="truth-table-body"></tbody>
+        </table>
 
-      <section id="manual-panel" class="panel">
-        <h2>Weights &amp; bias</h2>
-        <label class="slider-row">
-          <span>w1</span>
-          <input id="w1-slider" type="range" min="-2" max="2" step="0.01" />
-          <span id="w1-value" class="value"></span>
-        </label>
-        <label class="slider-row">
-          <span>w2</span>
-          <input id="w2-slider" type="range" min="-2" max="2" step="0.01" />
-          <span id="w2-value" class="value"></span>
-        </label>
-        <label class="slider-row">
-          <span>bias</span>
-          <input id="bias-slider" type="range" min="-2" max="2" step="0.01" />
-          <span id="bias-value" class="value"></span>
-        </label>
+        <p data-role="status" class="status"></p>
+
+        <section data-role="manual-panel" class="panel">
+          <h2>Weights &amp; bias</h2>
+          <label class="slider-row">
+            <span>w1</span>
+            <input data-role="w1-slider" type="range" min="-2" max="2" step="0.01" />
+            <span data-role="w1-value" class="value"></span>
+          </label>
+          <label class="slider-row">
+            <span>w2</span>
+            <input data-role="w2-slider" type="range" min="-2" max="2" step="0.01" />
+            <span data-role="w2-value" class="value"></span>
+          </label>
+          <label class="slider-row">
+            <span>bias</span>
+            <input data-role="bias-slider" type="range" min="-2" max="2" step="0.01" />
+            <span data-role="bias-value" class="value"></span>
+          </label>
+        </section>
+
+        <section data-role="training-panel" class="panel">
+          <h2>Learning</h2>
+          <label class="slider-row">
+            <span>rate</span>
+            <input data-role="lr-slider" type="range" min="0.01" max="1" step="0.01" />
+            <span data-role="lr-value" class="value"></span>
+          </label>
+          <div class="buttons">
+            <button data-role="step-btn">Step</button>
+            <button data-role="run-btn">Run</button>
+            <button data-role="reset-btn">Reset</button>
+          </div>
+          <p class="epoch">Epoch <span data-role="epoch-count"></span></p>
+        </section>
       </section>
 
-      <section id="training-panel" class="panel">
-        <h2>Learning</h2>
-        <label class="slider-row">
-          <span>rate</span>
-          <input id="lr-slider" type="range" min="0.01" max="1" step="0.01" />
-          <span id="lr-value" class="value"></span>
-        </label>
-        <div class="buttons">
-          <button id="step-btn">Step</button>
-          <button id="run-btn">Run</button>
-          <button id="reset-btn">Reset</button>
+      <section id="plane-view" class="view">
+        <div class="gate-selector" data-role="gate-selector">
+          <button data-role="gate-btn" data-gate="AND">AND</button>
+          <button data-role="gate-btn" data-gate="OR">OR</button>
+          <button data-role="gate-btn" data-gate="NAND">NAND</button>
+          <button data-role="gate-btn" data-gate="NOR">NOR</button>
+          <button data-role="gate-btn" data-gate="XOR">XOR</button>
         </div>
-        <p class="epoch">Epoch <span id="epoch-count"></span></p>
+
+        <div class="mode-tabs">
+          <button data-role="mode-manual" class="mode-tab">Manual</button>
+          <button data-role="mode-training" class="mode-tab">Training</button>
+        </div>
+
+        <div class="plane-wrap">
+          <svg id="plane-svg" viewBox="0 0 400 400"></svg>
+        </div>
+
+        <p data-role="status" class="status"></p>
+
+        <section data-role="manual-panel" class="panel">
+          <h2>Weights &amp; bias</h2>
+          <label class="slider-row">
+            <span>w1</span>
+            <input data-role="w1-slider" type="range" min="-2" max="2" step="0.01" />
+            <span data-role="w1-value" class="value"></span>
+          </label>
+          <label class="slider-row">
+            <span>w2</span>
+            <input data-role="w2-slider" type="range" min="-2" max="2" step="0.01" />
+            <span data-role="w2-value" class="value"></span>
+          </label>
+          <label class="slider-row">
+            <span>bias</span>
+            <input data-role="bias-slider" type="range" min="-2" max="2" step="0.01" />
+            <span data-role="bias-value" class="value"></span>
+          </label>
+        </section>
+
+        <section data-role="training-panel" class="panel">
+          <h2>Learning</h2>
+          <label class="slider-row">
+            <span>rate</span>
+            <input data-role="lr-slider" type="range" min="0.01" max="1" step="0.01" />
+            <span data-role="lr-value" class="value"></span>
+          </label>
+          <div class="buttons">
+            <button data-role="step-btn">Step</button>
+            <button data-role="run-btn">Run</button>
+            <button data-role="reset-btn">Reset</button>
+          </div>
+          <p class="epoch">Epoch <span data-role="epoch-count"></span></p>
+        </section>
       </section>
     </main>
     <script type="module" src="app.js"></script>
