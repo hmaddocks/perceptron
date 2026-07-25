@@ -15,10 +15,9 @@ export class Perceptron {
     return this.sum(x1, x2) >= 0 ? 1 : 0;
   }
 
-  // One perceptron-learning-rule update for a single truth-table row.
-  // Returns the prediction/error made *before* the update, for display.
-  applyRow(row, learningRate) {
-    const [x1, x2, expected] = row;
+  // Shared perceptron-learning-rule update. Returns the prediction/error
+  // made *before* the update, for display.
+  applyUpdate(x1, x2, expected, learningRate) {
     const pred = this.predict(x1, x2);
     const error = expected - pred;
     if (error !== 0) {
@@ -27,6 +26,17 @@ export class Perceptron {
       this.bias += learningRate * error;
     }
     return { pred, error };
+  }
+
+  // One perceptron-learning-rule update for a single truth-table row.
+  applyRow(row, learningRate) {
+    const [x1, x2, expected] = row;
+    return this.applyUpdate(x1, x2, expected, learningRate);
+  }
+
+  // One perceptron-learning-rule update for a single freeform point.
+  applyPoint(point, learningRate) {
+    return this.applyUpdate(point.x, point.y, point.label, learningRate);
   }
 }
 

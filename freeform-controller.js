@@ -1,7 +1,15 @@
-import { Perceptron, EPOCH_CAP, CLASS_A, CLASS_B, PRESET_SEPARABLE, PRESET_NON_SEPARABLE } from "./freeform-perceptron.js";
+import { Perceptron, EPOCH_CAP } from "./perceptron.js";
+import { CLASS_A, CLASS_B, PRESET_SEPARABLE, PRESET_NON_SEPARABLE } from "./freeform-data.js";
 import { renderPlane, eventToDomain, clampToActiveRegion } from "./freeform-plane.js";
 
 const RUN_INTERVAL_MS = 60;
+
+// Freeform starts from small random weights (rather than the gate demo's
+// zero-init) so there's visible work for Training mode to do immediately.
+function randomStartingPerceptron() {
+  const randWeight = () => (Math.random() * 2 - 1) * 0.5;
+  return new Perceptron(randWeight(), randWeight(), randWeight());
+}
 
 export function createController(root) {
   const q = (role) => root.querySelector(`[data-role="${role}"]`);
@@ -10,7 +18,7 @@ export function createController(root) {
   const svg = q("plane");
 
   const state = {
-    perceptron: new Perceptron(),
+    perceptron: randomStartingPerceptron(),
     points: [],
     currentClass: CLASS_A,
     learningRate: 0.1,
@@ -84,7 +92,7 @@ export function createController(root) {
 
   function reset() {
     stopRun();
-    state.perceptron = new Perceptron();
+    state.perceptron = randomStartingPerceptron();
     state.points = [];
     state.epoch = 0;
     state.pointCursor = 0;

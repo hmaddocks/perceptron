@@ -36,6 +36,27 @@ function svgEl(tag, attrs) {
   return el;
 }
 
+// Endpoints of the line w1*x + w2*y + bias = 0, clipped to a generous range.
+function boundaryEndpoints(perceptron) {
+  const { w1, w2, bias } = perceptron;
+  const clamp = (v) => Math.max(-5, Math.min(5, v));
+  if (Math.abs(w2) > 1e-6) {
+    const yAt = (x) => -(w1 * x + bias) / w2;
+    return [
+      { x: -1.5, y: clamp(yAt(-1.5)) },
+      { x: 1.5, y: clamp(yAt(1.5)) },
+    ];
+  }
+  if (Math.abs(w1) > 1e-6) {
+    const x0 = -bias / w1;
+    return [
+      { x: x0, y: -1.5 },
+      { x: x0, y: 1.5 },
+    ];
+  }
+  return null;
+}
+
 export function renderPlane(svg, { points, perceptron }) {
   while (svg.firstChild) svg.removeChild(svg.firstChild);
 
@@ -55,7 +76,7 @@ export function renderPlane(svg, { points, perceptron }) {
   svg.appendChild(svgEl("line", { class: "plane-axis", x1: 0, y1: origin.py, x2: VIEWBOX_SIZE, y2: origin.py }));
   svg.appendChild(svgEl("line", { class: "plane-axis", x1: origin.px, y1: 0, x2: origin.px, y2: VIEWBOX_SIZE }));
 
-  const boundary = perceptron.boundaryEndpoints();
+  const boundary = boundaryEndpoints(perceptron);
   if (boundary) {
     const [a, b] = boundary.map(({ x, y }) => toScreen(x, y));
     svg.appendChild(svgEl("line", { class: "plane-boundary", x1: a.px, y1: a.py, x2: b.px, y2: b.py }));
