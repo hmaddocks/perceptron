@@ -57,8 +57,35 @@ export function renderPlane(svg, { rows, perceptron, activeIndex }) {
 
   const boundary = boundaryEndpoints(perceptron);
   if (boundary) {
-    const [a, b] = boundary.map(({ x, y }) => toScreen(x, y));
-    svg.appendChild(svgEl("line", { class: "plane-boundary", x1: a.px, y1: a.py, x2: b.px, y2: b.py }));
+    const [a, b] = boundary;
+    const aScreen = toScreen(a.x, a.y);
+    const bScreen = toScreen(b.x, b.y);
+    svg.appendChild(svgEl("line", { class: "plane-boundary", x1: aScreen.px, y1: aScreen.py, x2: bScreen.px, y2: bScreen.py }));
+
+    // The gradient (w1, w2) points toward increasing sum — i.e. toward the
+    // "positive"/output-1 side of the line. Drop a +/- badge on each side.
+    const { w1, w2 } = perceptron;
+    const magnitude = Math.hypot(w1, w2);
+    if (magnitude > 1e-6) {
+      const nx = w1 / magnitude;
+      const ny = w2 / magnitude;
+      const midX = (a.x + b.x) / 2;
+      const midY = (a.y + b.y) / 2;
+      const offset = 0.15;
+
+      const plus = toScreen(midX + nx * offset, midY + ny * offset);
+      const minus = toScreen(midX - nx * offset, midY - ny * offset);
+
+      svg.appendChild(svgEl("circle", { class: "plane-side-badge positive", cx: plus.px, cy: plus.py, r: 12 }));
+      const plusLabel = svgEl("text", { class: "plane-side-label", x: plus.px, y: plus.py });
+      plusLabel.textContent = "+";
+      svg.appendChild(plusLabel);
+
+      svg.appendChild(svgEl("circle", { class: "plane-side-badge negative", cx: minus.px, cy: minus.py, r: 12 }));
+      const minusLabel = svgEl("text", { class: "plane-side-label", x: minus.px, y: minus.py });
+      minusLabel.textContent = "−";
+      svg.appendChild(minusLabel);
+    }
   }
 
   rows.forEach(([x1, x2, expected], index) => {

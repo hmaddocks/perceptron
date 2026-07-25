@@ -277,3 +277,24 @@ body[data-active-view="plane"] #table-view {
   fill: var(--muted);
   text-anchor: middle;
 }
+
+.plane-side-badge {
+  stroke: white;
+  stroke-width: 2;
+  opacity: 0.9;
+}
+.plane-side-badge.positive {
+  fill: #2563eb;
+}
+.plane-side-badge.negative {
+  fill: #9ca3af;
+}
+
+.plane-side-label {
+  font-size: 14px;
+  font-weight: 700;
+  fill: white;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
