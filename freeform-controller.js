@@ -1,7 +1,7 @@
 import { Perceptron, EPOCH_CAP, CLASS_A, CLASS_B, PRESET_SEPARABLE, PRESET_NON_SEPARABLE } from "./freeform-perceptron.js";
 import { renderPlane, eventToDomain, clampToActiveRegion } from "./freeform-plane.js";
 
-const RUN_INTERVAL_MS = 350;
+const RUN_INTERVAL_MS = 60;
 
 export function createController(root) {
   const q = (role) => root.querySelector(`[data-role="${role}"]`);
@@ -43,8 +43,10 @@ export function createController(root) {
     render();
   }
 
-  function stepOnce() {
-    if (state.converged || state.points.length === 0 || state.epoch >= EPOCH_CAP) return;
+  // Applies the learning rule to a single point, without rendering. Returns
+  // false if there was nothing to do (already converged/capped/empty).
+  function applyOnePoint() {
+    if (state.converged || state.points.length === 0 || state.epoch >= EPOCH_CAP) return false;
     const point = state.points[state.pointCursor];
     const { pred, error } = state.perceptron.applyPoint(point, state.learningRate);
     state.lastComputation = { point, pred, error };
@@ -61,6 +63,20 @@ export function createController(root) {
       state.misclassifiedInEpoch = 0;
     }
     if (state.epoch >= EPOCH_CAP) stopRun();
+    return true;
+  }
+
+  // Run animates one point at a time, so its progress is visible.
+  function stepPoint() {
+    if (applyOnePoint()) render();
+  }
+
+  // Step (the button) advances a full epoch — every point once — in one click.
+  function stepEpoch() {
+    const startEpoch = state.epoch;
+    while (state.epoch === startEpoch && applyOnePoint()) {
+      // keep going until the epoch counter ticks over (or we hit convergence/cap)
+    }
     render();
   }
 
@@ -69,7 +85,7 @@ export function createController(root) {
       stopRun();
     } else if (!state.converged && state.epoch < EPOCH_CAP && state.points.length > 0) {
       state.running = true;
-      state.intervalId = setInterval(stepOnce, RUN_INTERVAL_MS);
+      state.intervalId = setInterval(stepPoint, RUN_INTERVAL_MS);
     }
     render();
   }
@@ -168,7 +184,7 @@ export function createController(root) {
   });
 
   // --- Training mode: controls ---
-  q("step-btn")?.addEventListener("click", stepOnce);
+  q("step-btn")?.addEventListener("click", stepEpoch);
   q("run-btn")?.addEventListener("click", toggleRun);
   q("reset-btn")?.addEventListener("click", reset);
   q("preset-separable")?.addEventListener("click", () => loadPreset(PRESET_SEPARABLE));

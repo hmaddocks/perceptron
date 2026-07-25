@@ -54,7 +54,7 @@ const TEMPLATE = `
             <span data-role="lr-value" class="va-value"></span>
           </label>
           <div class="va-buttons">
-            <button data-role="step-btn">Step</button>
+            <button data-role="step-btn">Step Epoch</button>
             <button data-role="run-btn">Run</button>
             <button data-role="reset-btn">Reset</button>
           </div>
