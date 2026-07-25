@@ -11,12 +11,7 @@ const TEMPLATE = `
         <svg data-role="plane" viewBox="0 0 400 400"></svg>
       </div>
       <aside class="va-sidebar">
-        <div class="va-tabs">
-          <button data-role="mode-manual" class="va-tab">Manual</button>
-          <button data-role="mode-training" class="va-tab">Training</button>
-        </div>
-
-        <section data-manual-only class="va-panel">
+        <section class="va-panel">
           <h2>Weights &amp; bias</h2>
           <label class="va-slider-row">
             <span>w1</span>
@@ -35,7 +30,7 @@ const TEMPLATE = `
           </label>
         </section>
 
-        <section data-training-only class="va-panel">
+        <section class="va-panel">
           <h2>Training data</h2>
           <div class="va-class-toggle">
             <button data-role="class-toggle" data-class-value="0" class="class-a-btn">● Class A</button>

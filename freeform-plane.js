@@ -36,7 +36,7 @@ function svgEl(tag, attrs) {
   return el;
 }
 
-export function renderPlane(svg, { points, testPoint, perceptron, mode }) {
+export function renderPlane(svg, { points, perceptron }) {
   while (svg.firstChild) svg.removeChild(svg.firstChild);
 
   const active = toScreen(-1, -1);
@@ -69,17 +69,6 @@ export function renderPlane(svg, { points, testPoint, perceptron, mode }) {
         cx: px,
         cy: py,
         r: 8,
-      })
-    );
-  }
-
-  if (mode === "manual" && testPoint) {
-    const { px, py } = toScreen(testPoint.x, testPoint.y);
-    const r = 10;
-    svg.appendChild(
-      svgEl("polygon", {
-        class: "plane-test-point",
-        points: `${px},${py - r} ${px + r},${py} ${px},${py + r} ${px - r},${py}`,
       })
     );
   }

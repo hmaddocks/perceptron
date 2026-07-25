@@ -10,10 +10,8 @@ export function createController(root) {
   const svg = q("plane");
 
   const state = {
-    mode: "manual",
     perceptron: new Perceptron(),
     points: [],
-    testPoint: { x: 0, y: 0 },
     currentClass: CLASS_A,
     learningRate: 0.1,
     epoch: 0,
@@ -35,12 +33,6 @@ export function createController(root) {
       state.intervalId = null;
     }
     state.running = false;
-  }
-
-  function setMode(mode) {
-    state.mode = mode;
-    root.dataset.mode = mode;
-    render();
   }
 
   // Applies the learning rule to a single point, without rendering. Returns
@@ -94,7 +86,6 @@ export function createController(root) {
     stopRun();
     state.perceptron = new Perceptron();
     state.points = [];
-    state.testPoint = { x: 0, y: 0 };
     state.epoch = 0;
     state.pointCursor = 0;
     state.misclassifiedInEpoch = 0;
@@ -127,11 +118,7 @@ export function createController(root) {
     render();
   }
 
-  // --- Mode buttons ---
-  q("mode-manual")?.addEventListener("click", () => setMode("manual"));
-  q("mode-training")?.addEventListener("click", () => setMode("training"));
-
-  // --- Manual mode: weight/bias sliders ---
+  // --- Weight/bias sliders ---
   q("w1-slider")?.addEventListener("input", (e) => {
     state.perceptron.w1 = Number(e.target.value);
     render();
@@ -145,31 +132,14 @@ export function createController(root) {
     render();
   });
 
-  // --- Manual mode: draggable test point ---
-  let draggingTestPoint = false;
+  // --- Click the plane to add a training point of the current class ---
   svg?.addEventListener("pointerdown", (e) => {
     const { x, y } = eventToDomain(svg, e);
-    if (state.mode === "manual") {
-      draggingTestPoint = true;
-      state.testPoint = clampToActiveRegion(x, y);
-      render();
-    } else if (state.mode === "training") {
-      const clamped = clampToActiveRegion(x, y);
-      addPoint(clamped.x, clamped.y);
-    }
-  });
-  svg?.addEventListener("pointermove", (e) => {
-    if (draggingTestPoint && state.mode === "manual") {
-      const { x, y } = eventToDomain(svg, e);
-      state.testPoint = clampToActiveRegion(x, y);
-      render();
-    }
-  });
-  window.addEventListener("pointerup", () => {
-    draggingTestPoint = false;
+    const clamped = clampToActiveRegion(x, y);
+    addPoint(clamped.x, clamped.y);
   });
 
-  // --- Training mode: class toggle ---
+  // --- Class toggle ---
   qa("class-toggle").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.currentClass = Number(btn.dataset.classValue);
@@ -177,13 +147,13 @@ export function createController(root) {
     });
   });
 
-  // --- Training mode: learning rate ---
+  // --- Learning rate ---
   q("lr-slider")?.addEventListener("input", (e) => {
     state.learningRate = Number(e.target.value);
     render();
   });
 
-  // --- Training mode: controls ---
+  // --- Training controls ---
   q("step-btn")?.addEventListener("click", stepEpoch);
   q("run-btn")?.addEventListener("click", toggleRun);
   q("reset-btn")?.addEventListener("click", reset);
@@ -192,7 +162,6 @@ export function createController(root) {
   q("clear-points")?.addEventListener("click", clearPoints);
 
   function statusText() {
-    if (state.mode === "manual") return "Manual mode — drag the ☆ test point or move the sliders";
     if (state.points.length === 0) return "Click the plane to add training points, or load a preset";
     if (state.converged) return `✓ Converged after ${state.epoch} epoch${state.epoch === 1 ? "" : "s"}`;
     if (state.epoch >= EPOCH_CAP) return `⚠ Stopped after ${EPOCH_CAP} epochs — not linearly separable`;
@@ -216,10 +185,6 @@ export function createController(root) {
     if (q("lr-value")) q("lr-value").textContent = fmt(state.learningRate);
     if (q("epoch-count")) q("epoch-count").textContent = state.epoch;
 
-    // Mode buttons active state
-    q("mode-manual")?.classList.toggle("active", state.mode === "manual");
-    q("mode-training")?.classList.toggle("active", state.mode === "training");
-
     // Class toggle active state
     qa("class-toggle").forEach((btn) => {
       btn.classList.toggle("active", Number(btn.dataset.classValue) === state.currentClass);
@@ -237,16 +202,8 @@ export function createController(root) {
       indicator.classList.toggle("running", state.running);
     }
 
-    // Computation view values: manual mode shows the live test point,
-    // training mode shows the most recently processed training point.
-    let calc;
-    if (state.mode === "manual") {
-      calc = { x: state.testPoint.x, y: state.testPoint.y };
-    } else if (state.lastComputation) {
-      calc = { x: state.lastComputation.point.x, y: state.lastComputation.point.y };
-    } else {
-      calc = null;
-    }
+    // Computation view shows the most recently processed training point.
+    const calc = state.lastComputation ? { x: state.lastComputation.point.x, y: state.lastComputation.point.y } : null;
     const sum = calc ? state.perceptron.sum(calc.x, calc.y) : null;
     const output = calc ? state.perceptron.predict(calc.x, calc.y) : null;
     const setCalc = (role, value) => {
