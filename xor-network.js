@@ -1,4 +1,7 @@
 import { createController } from "./xor-network-controller.js";
+import { mountSiteNav } from "./nav.js";
+
+mountSiteNav("xor-network.html");
 
 function neuronPanel(title, key) {
   return `

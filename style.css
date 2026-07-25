@@ -41,17 +41,6 @@ button {
   margin: 4px 0 0;
   color: var(--muted);
 }
-.freeform-link {
-  display: inline-block;
-  margin-top: 8px;
-  font-size: 13px;
-  color: #2563eb;
-  text-decoration: none;
-}
-.freeform-link:hover {
-  text-decoration: underline;
-}
-
 .gate-selector,
 .mode-tabs {
   display: flex;

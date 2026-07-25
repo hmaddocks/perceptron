@@ -1,5 +1,8 @@
 import { Perceptron, GATES, EPOCH_CAP } from "./perceptron.js";
 import { renderPlane } from "./plane.js";
+import { mountSiteNav } from "./nav.js";
+
+mountSiteNav("index.html");
 
 const RUN_INTERVAL_MS = 500;
 

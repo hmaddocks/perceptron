@@ -16,6 +16,10 @@ _Avoid_: Preset, dataset, function
 One of two ways of visualizing the same shared perceptron/gate/training state — Truth table or Plane. Switching views via the top menu is instant and never resets the gate, weights, or training progress (see ADR-0004).
 _Avoid_: Page, tab, mode (mode means Manual/Training, a different axis)
 
+**Site nav**:
+The shared top navbar (`nav.js`/`nav.css`), identical on all 3 standalone pages (Logic Gate Demo, Freeform Classifier, XOR Network), linking between them. A full page load, with no state shared across the links it contains — distinct from **View** above, which switches content within the Logic Gate Demo page only, with no page load and shared state.
+_Avoid_: Menu (menu is Gate selector's `.gate-selector` or View's `.view-menu`, both in-page), tabs
+
 **Truth table**:
 A view showing all 4 possible input combinations — (0,0), (0,1), (1,0), (1,1) — as rows, each with its expected output (from the selected Gate), the perceptron's current weighted sum, and its actual output.
 _Avoid_: Input space, plane, grid

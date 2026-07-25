@@ -1,4 +1,7 @@
 import { createController } from "./freeform-controller.js";
+import { mountSiteNav } from "./nav.js";
+
+mountSiteNav("freeform.html");
 
 const TEMPLATE = `
   <div class="variant-a">

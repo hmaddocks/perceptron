@@ -32,20 +32,6 @@ button {
   cursor: pointer;
 }
 
-.back-link {
-  flex: none;
-  display: block;
-  padding: 10px 16px;
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 13px;
-  border-bottom: 1px solid var(--border);
-  background: var(--panel-bg);
-}
-.back-link:hover {
-  color: var(--ink);
-}
-
 #app {
   flex: 1;
   min-height: 0;
