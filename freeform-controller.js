@@ -13,10 +13,10 @@ function randomStartingPerceptron() {
 }
 
 export function createController(root) {
-  const q = (role) => root.querySelector(`[data-role="${role}"]`);
-  const qa = (role) => Array.from(root.querySelectorAll(`[data-role="${role}"]`));
+  const getElement = (role) => root.querySelector(`[data-role="${role}"]`);
+  const queryElementsByRole = (role) => Array.from(root.querySelectorAll(`[data-role="${role}"]`));
 
-  const svg = q("plane");
+  const svg = getElement("plane");
 
   const state = {
     perceptron: randomStartingPerceptron(),
@@ -127,15 +127,15 @@ export function createController(root) {
   }
 
   // --- Weight/bias sliders ---
-  q("w1-slider")?.addEventListener("input", (e) => {
+  getElement("w1-slider")?.addEventListener("input", (e) => {
     state.perceptron.w1 = Number(e.target.value);
     render();
   });
-  q("w2-slider")?.addEventListener("input", (e) => {
+  getElement("w2-slider")?.addEventListener("input", (e) => {
     state.perceptron.w2 = Number(e.target.value);
     render();
   });
-  q("bias-slider")?.addEventListener("input", (e) => {
+  getElement("bias-slider")?.addEventListener("input", (e) => {
     state.perceptron.bias = Number(e.target.value);
     render();
   });
@@ -148,7 +148,7 @@ export function createController(root) {
   });
 
   // --- Class toggle ---
-  qa("class-toggle").forEach((btn) => {
+  queryElementsByRole("class-toggle").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.currentClass = Number(btn.dataset.classValue);
       render();
@@ -156,12 +156,12 @@ export function createController(root) {
   });
 
   // --- Training controls ---
-  q("step-btn")?.addEventListener("click", stepEpoch);
-  q("run-btn")?.addEventListener("click", toggleRun);
-  q("reset-btn")?.addEventListener("click", reset);
-  q("preset-separable")?.addEventListener("click", () => loadPreset(PRESET_SEPARABLE));
-  q("preset-nonseparable")?.addEventListener("click", () => loadPreset(PRESET_NON_SEPARABLE));
-  q("clear-points")?.addEventListener("click", clearPoints);
+  getElement("step-btn")?.addEventListener("click", stepEpoch);
+  getElement("run-btn")?.addEventListener("click", toggleRun);
+  getElement("reset-btn")?.addEventListener("click", reset);
+  getElement("preset-separable")?.addEventListener("click", () => loadPreset(PRESET_SEPARABLE));
+  getElement("preset-nonseparable")?.addEventListener("click", () => loadPreset(PRESET_NON_SEPARABLE));
+  getElement("clear-points")?.addEventListener("click", clearPoints);
 
   function statusText() {
     if (state.points.length === 0) return "Click the plane to add training points, or load a preset";
@@ -174,29 +174,35 @@ export function createController(root) {
     renderPlane(svg, state);
 
     // Slider + readout values
-    const w1 = q("w1-slider");
+    const w1 = getElement("w1-slider");
     if (w1) w1.value = state.perceptron.w1;
-    const w2 = q("w2-slider");
+    const w2 = getElement("w2-slider");
     if (w2) w2.value = state.perceptron.w2;
-    const bias = q("bias-slider");
+    const bias = getElement("bias-slider");
     if (bias) bias.value = state.perceptron.bias;
-    if (q("w1-value")) q("w1-value").textContent = fmt(state.perceptron.w1);
-    if (q("w2-value")) q("w2-value").textContent = fmt(state.perceptron.w2);
-    if (q("bias-value")) q("bias-value").textContent = fmt(state.perceptron.bias);
-    if (q("epoch-count")) q("epoch-count").textContent = state.epoch;
+    if (getElement("w1-value")) getElement("w1-value").textContent = fmt(state.perceptron.w1);
+    if (getElement("w2-value")) getElement("w2-value").textContent = fmt(state.perceptron.w2);
+    if (getElement("bias-value")) getElement("bias-value").textContent = fmt(state.perceptron.bias);
+    if (getElement("epoch-count")) getElement("epoch-count").textContent = state.epoch;
 
     // Class toggle active state
-    qa("class-toggle").forEach((btn) => {
+    queryElementsByRole("class-toggle").forEach((btn) => {
       btn.classList.toggle("active", Number(btn.dataset.classValue) === state.currentClass);
     });
 
-    // Run button label
-    const runBtn = q("run-btn");
-    if (runBtn) runBtn.textContent = state.running ? "Pause" : "Run";
+    // Run button label. Only write when it changes: reassigning textContent
+    // every tick recreates the text node, which Safari treats as cancelling
+    // any click in flight on that button — breaking Pause since this render
+    // loop runs constantly while training is running.
+    const runBtn = getElement("run-btn");
+    if (runBtn) {
+      const label = state.running ? "Pause" : "Run";
+      if (runBtn.textContent !== label) runBtn.textContent = label;
+    }
 
-    if (q("status")) q("status").textContent = statusText();
+    if (getElement("status")) getElement("status").textContent = statusText();
 
-    const indicator = q("training-indicator");
+    const indicator = getElement("training-indicator");
     if (indicator) {
       indicator.textContent = state.running ? "● Training…" : "■ Stopped";
       indicator.classList.toggle("running", state.running);
@@ -207,7 +213,7 @@ export function createController(root) {
     const sum = calc ? state.perceptron.sum(calc.x, calc.y) : null;
     const output = calc ? state.perceptron.predict(calc.x, calc.y) : null;
     const setCalc = (role, value) => {
-      const el = q(role);
+      const el = getElement(role);
       if (el) el.textContent = value;
     };
     setCalc("calc-x1", calc ? fmt(calc.x) : "—");

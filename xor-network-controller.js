@@ -5,22 +5,21 @@ const NEURON_KEYS = ["h1", "h2", "out"];
 const WEIGHT_FIELDS = ["w1", "w2", "bias"];
 
 export function createController(root) {
-  const q = (role) => root.querySelector(`[data-role="${role}"]`);
-  const qa = (role) => Array.from(root.querySelectorAll(`[data-role="${role}"]`));
+  const getElement = (role) => root.querySelector(`[data-role="${role}"]`);
 
-  const svg = q("diagram");
+  const svg = getElement("diagram");
 
   const state = {
     neurons: cloneNeurons(SOLUTION),
     activeRowIndex: 0,
   };
 
-  function fmt(n) {
+  function format(n) {
     return Number(n).toFixed(2);
   }
 
   // Avoids "-0.00" from e.g. 0 * -1.
-  function fmtProduct(n) {
+  function formatProduct(n) {
     const rounded = Math.round(n * 100) / 100;
     return (rounded === 0 ? 0 : rounded).toFixed(2);
   }
@@ -36,7 +35,7 @@ export function createController(root) {
   }
 
   function sumFormula(term1, term2, bias, sum) {
-    return `${signedTerm(term1, true)} ${signedTerm(term2, false)} ${signedTerm(bias, false)} = ${fmtProduct(sum)}`;
+    return `${signedTerm(term1, true)} ${signedTerm(term2, false)} ${signedTerm(bias, false)} = ${formatProduct(sum)}`;
   }
 
   function resetToSolution() {
@@ -47,7 +46,7 @@ export function createController(root) {
   // --- Weight/bias sliders (one set of 3 per neuron: w1, w2, bias) ---
   for (const neuronKey of NEURON_KEYS) {
     for (const field of WEIGHT_FIELDS) {
-      const slider = q(`${neuronKey}-${field}-slider`);
+      const slider = getElement(`${neuronKey}-${field}-slider`);
       slider?.addEventListener("input", (e) => {
         state.neurons[neuronKey][field] = Number(e.target.value);
         render();
@@ -55,7 +54,7 @@ export function createController(root) {
     }
   }
 
-  q("reset-btn")?.addEventListener("click", resetToSolution);
+  getElement("reset-btn")?.addEventListener("click", resetToSolution);
 
   function computeAllRows() {
     return XOR_ROWS.map(([x1, x2, expected]) => {
@@ -65,7 +64,7 @@ export function createController(root) {
   }
 
   function renderTable(rows) {
-    const tbody = q("table-body");
+    const tbody = getElement("table-body");
     if (!tbody) return;
     tbody.innerHTML = "";
     rows.forEach((row, index) => {
@@ -103,7 +102,7 @@ export function createController(root) {
     );
 
     const setFormula = (role, value) => {
-      const el = q(role);
+      const el = getElement(role);
       if (el) el.textContent = value;
     };
     setFormula("h1-formula", h1Formula);
@@ -122,14 +121,14 @@ export function createController(root) {
     for (const neuronKey of NEURON_KEYS) {
       for (const field of WEIGHT_FIELDS) {
         const value = state.neurons[neuronKey][field];
-        const slider = q(`${neuronKey}-${field}-slider`);
+        const slider = getElement(`${neuronKey}-${field}-slider`);
         if (slider) slider.value = value;
-        const readout = q(`${neuronKey}-${field}-value`);
-        if (readout) readout.textContent = fmt(value);
+        const readout = getElement(`${neuronKey}-${field}-value`);
+        if (readout) readout.textContent = format(value);
       }
     }
 
-    const status = q("status");
+    const status = getElement("status");
     if (status) {
       status.textContent =
         correctCount === 4

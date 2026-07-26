@@ -21,9 +21,9 @@ const state = {
   lastRowIndex: null,
 };
 
-const fmt = (n) => Number(n).toFixed(2);
+const format = (n) => Number(n).toFixed(2);
 
-const qa = (role) => Array.from(document.querySelectorAll(`[data-role="${role}"]`));
+const queryElementsByRole = (role) => Array.from(document.querySelectorAll(`[data-role="${role}"]`));
 
 const viewTableBtn = document.getElementById("view-table-btn");
 const viewPlaneBtn = document.getElementById("view-plane-btn");
@@ -107,34 +107,34 @@ function reset() {
 viewTableBtn.addEventListener("click", () => setView("table"));
 viewPlaneBtn.addEventListener("click", () => setView("plane"));
 
-qa("gate-btn").forEach((btn) => {
+queryElementsByRole("gate-btn").forEach((btn) => {
   btn.addEventListener("click", () => setGate(btn.dataset.gate));
 });
-qa("mode-manual").forEach((btn) => btn.addEventListener("click", () => setMode("manual")));
-qa("mode-training").forEach((btn) => btn.addEventListener("click", () => setMode("training")));
+queryElementsByRole("mode-manual").forEach((btn) => btn.addEventListener("click", () => setMode("manual")));
+queryElementsByRole("mode-training").forEach((btn) => btn.addEventListener("click", () => setMode("training")));
 
-qa("w1-slider").forEach((el) =>
+queryElementsByRole("w1-slider").forEach((el) =>
   el.addEventListener("input", (e) => {
     state.perceptron.w1 = Number(e.target.value);
     render();
   })
 );
-qa("w2-slider").forEach((el) =>
+queryElementsByRole("w2-slider").forEach((el) =>
   el.addEventListener("input", (e) => {
     state.perceptron.w2 = Number(e.target.value);
     render();
   })
 );
-qa("bias-slider").forEach((el) =>
+queryElementsByRole("bias-slider").forEach((el) =>
   el.addEventListener("input", (e) => {
     state.perceptron.bias = Number(e.target.value);
     render();
   })
 );
 
-qa("step-btn").forEach((btn) => btn.addEventListener("click", stepOnce));
-qa("run-btn").forEach((btn) => btn.addEventListener("click", toggleRun));
-qa("reset-btn").forEach((btn) => btn.addEventListener("click", reset));
+queryElementsByRole("step-btn").forEach((btn) => btn.addEventListener("click", stepOnce));
+queryElementsByRole("run-btn").forEach((btn) => btn.addEventListener("click", toggleRun));
+queryElementsByRole("reset-btn").forEach((btn) => btn.addEventListener("click", reset));
 
 function statusText() {
   if (state.mode === "manual") return "Manual mode — adjust the sliders and watch it update";
@@ -145,9 +145,9 @@ function statusText() {
 }
 
 function formatCalculation(x1, x2, w1, w2, bias, sum) {
-  const signedBias = bias >= 0 ? `+ ${fmt(bias)}` : `- ${fmt(Math.abs(bias))}`;
-  const terms = `${x1}×${fmt(w1)} + ${x2}×${fmt(w2)} ${signedBias}`;
-  return `${terms} = <span class="calc-sum">${fmt(sum)}</span>`;
+  const signedBias = bias >= 0 ? `+ ${format(bias)}` : `- ${format(Math.abs(bias))}`;
+  const terms = `${x1}×${format(w1)} + ${x2}×${format(w2)} ${signedBias}`;
+  return `${terms} = <span class="calc-sum">${format(sum)}</span>`;
 }
 
 function renderTable() {
@@ -190,21 +190,21 @@ function render() {
   viewTableBtn.classList.toggle("active", state.view === "table");
   viewPlaneBtn.classList.toggle("active", state.view === "plane");
 
-  qa("gate-btn").forEach((btn) => btn.classList.toggle("active", btn.dataset.gate === state.gate));
-  qa("mode-manual").forEach((btn) => btn.classList.toggle("active", state.mode === "manual"));
-  qa("mode-training").forEach((btn) => btn.classList.toggle("active", state.mode === "training"));
+  queryElementsByRole("gate-btn").forEach((btn) => btn.classList.toggle("active", btn.dataset.gate === state.gate));
+  queryElementsByRole("mode-manual").forEach((btn) => btn.classList.toggle("active", state.mode === "manual"));
+  queryElementsByRole("mode-training").forEach((btn) => btn.classList.toggle("active", state.mode === "training"));
 
-  qa("w1-slider").forEach((el) => (el.value = state.perceptron.w1));
-  qa("w2-slider").forEach((el) => (el.value = state.perceptron.w2));
-  qa("bias-slider").forEach((el) => (el.value = state.perceptron.bias));
-  qa("w1-value").forEach((el) => (el.textContent = fmt(state.perceptron.w1)));
-  qa("w2-value").forEach((el) => (el.textContent = fmt(state.perceptron.w2)));
-  qa("bias-value").forEach((el) => (el.textContent = fmt(state.perceptron.bias)));
+  queryElementsByRole("w1-slider").forEach((el) => (el.value = state.perceptron.w1));
+  queryElementsByRole("w2-slider").forEach((el) => (el.value = state.perceptron.w2));
+  queryElementsByRole("bias-slider").forEach((el) => (el.value = state.perceptron.bias));
+  queryElementsByRole("w1-value").forEach((el) => (el.textContent = format(state.perceptron.w1)));
+  queryElementsByRole("w2-value").forEach((el) => (el.textContent = format(state.perceptron.w2)));
+  queryElementsByRole("bias-value").forEach((el) => (el.textContent = format(state.perceptron.bias)));
 
-  qa("epoch-count").forEach((el) => (el.textContent = state.epoch));
-  qa("run-btn").forEach((el) => (el.textContent = state.running ? "Pause" : "Run"));
-  qa("status").forEach((el) => (el.textContent = statusText()));
-  qa("training-indicator").forEach((el) => {
+  queryElementsByRole("epoch-count").forEach((el) => (el.textContent = state.epoch));
+  queryElementsByRole("run-btn").forEach((el) => (el.textContent = state.running ? "Pause" : "Run"));
+  queryElementsByRole("status").forEach((el) => (el.textContent = statusText()));
+  queryElementsByRole("training-indicator").forEach((el) => {
     el.textContent = state.running ? "● Training…" : "■ Stopped";
     el.classList.toggle("running", state.running);
   });
