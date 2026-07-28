@@ -32,6 +32,10 @@ _Avoid_: Graph, chart, canvas
 The straight line, shown in the Plane view, where the perceptron's weighted sum equals zero — the dividing line between the two output classes.
 _Avoid_: Separating line, threshold line
 
+**Hidden-activation plane**:
+The XOR Network page's second view (alongside the node/edge Diagram), plotting each row's `(h1out, h2out)` point with the Output neuron's decision boundary drawn through them — the geometric reason the hidden layer's transform makes XOR linearly separable, shown rather than only explained via the Diagram's weights.
+_Avoid_: Graph, chart, canvas
+
 **Row**:
 One of the 4 fixed input combinations, shown as a table row in the Truth table view or a point in the Plane view.
 _Avoid_: Point, entry, case
