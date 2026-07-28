@@ -65,3 +65,87 @@ export function jitterOffsets(n) {
     return { x: JITTER_RADIUS * Math.cos(angle), y: JITTER_RADIUS * Math.sin(angle) };
   });
 }
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+export function renderHiddenPlane(svg, { rows, neurons }) {
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  const regionStart = toDomainScreen(0, 1);
+  const regionEnd = toDomainScreen(1, 0);
+  svg.appendChild(
+    svgEl("rect", {
+      class: "plane-active-region",
+      x: regionStart.px,
+      y: regionStart.py,
+      width: regionEnd.px - regionStart.px,
+      height: regionEnd.py - regionStart.py,
+    })
+  );
+
+  const boundary = boundaryEndpoints(neurons.out);
+  if (boundary) {
+    const [a, b] = boundary;
+    const aScreen = toDomainScreen(a.x, a.y);
+    const bScreen = toDomainScreen(b.x, b.y);
+    svg.appendChild(
+      svgEl("line", { class: "plane-boundary", x1: aScreen.px, y1: aScreen.py, x2: bScreen.px, y2: bScreen.py })
+    );
+
+    const { w1, w2 } = neurons.out;
+    const magnitude = Math.hypot(w1, w2);
+    if (magnitude > 1e-6) {
+      const nx = w1 / magnitude;
+      const ny = w2 / magnitude;
+      const canvasCenter = 0.5;
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const lengthSq = dx * dx + dy * dy;
+      const t = lengthSq > 1e-9 ? ((canvasCenter - a.x) * dx + (canvasCenter - a.y) * dy) / lengthSq : 0;
+      const tClamped = Math.max(0, Math.min(1, t));
+      const midX = a.x + tClamped * dx;
+      const midY = a.y + tClamped * dy;
+      const offset = 0.15;
+
+      const plus = toDomainScreen(midX + nx * offset, midY + ny * offset);
+      const minus = toDomainScreen(midX - nx * offset, midY - ny * offset);
+
+      svg.appendChild(svgEl("circle", { class: "plane-side-badge positive", cx: plus.px, cy: plus.py, r: 12 }));
+      const plusLabel = svgEl("text", { class: "plane-side-label", x: plus.px, y: plus.py });
+      plusLabel.textContent = "1";
+      svg.appendChild(plusLabel);
+
+      svg.appendChild(svgEl("circle", { class: "plane-side-badge negative", cx: minus.px, cy: minus.py, r: 12 }));
+      const minusLabel = svgEl("text", { class: "plane-side-label", x: minus.px, y: minus.py });
+      minusLabel.textContent = "0";
+      svg.appendChild(minusLabel);
+    }
+  }
+
+  const groups = groupByCorner(rows, neurons);
+  for (const group of groups) {
+    const offsets = jitterOffsets(group.members.length);
+    group.members.forEach((member, i) => {
+      const offset = offsets[i];
+      const { px, py } = toDomainScreen(group.hx + offset.x, group.hy + offset.y);
+      const correct = member.actual === member.expected;
+
+      svg.appendChild(
+        svgEl("circle", {
+          class: `plane-point ${member.expected === 0 ? "class-a" : "class-b"} ${correct ? "correct" : "misclassified"}`,
+          cx: px,
+          cy: py,
+          r: 11,
+        })
+      );
+
+      const label = svgEl("text", { class: "plane-point-label", x: px, y: py - 18 });
+      label.textContent = `(${member.x1}, ${member.x2})`;
+      svg.appendChild(label);
+    });
+  }
+}
