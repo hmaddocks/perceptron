@@ -1,6 +1,6 @@
 import { XOR_ROWS, SOLUTION, computeNetwork, cloneNeurons } from "./xor-network-model.js";
 import { renderDiagram } from "./xor-network-diagram.js";
-import { renderHiddenPlane } from "./xor-hidden-plane.js";
+import { renderRegionPlane } from "./xor-hidden-plane.js";
 
 const NEURON_KEYS = ["h1", "h2", "out"];
 const WEIGHT_FIELDS = ["w1", "w2", "bias"];
@@ -59,7 +59,7 @@ export function createController(root) {
   getElement("reset-btn")?.addEventListener("click", resetToSolution);
 
   const diagramWrap = getElement("diagram-wrap");
-  const hiddenPlaneSvg = getElement("hidden-plane");
+  const hiddenPlaneSvg = getElement("region-plane");
 
   function setDiagramView(view) {
     state.diagramView = view;
@@ -67,7 +67,7 @@ export function createController(root) {
   }
 
   getElement("view-diagram-btn")?.addEventListener("click", () => setDiagramView("diagram"));
-  getElement("view-hidden-plane-btn")?.addEventListener("click", () => setDiagramView("hidden-plane"));
+  getElement("view-region-plane-btn")?.addEventListener("click", () => setDiagramView("region-plane"));
 
   function computeAllRows() {
     return XOR_ROWS.map(([x1, x2, expected]) => {
@@ -128,10 +128,10 @@ export function createController(root) {
     const correctCount = rows.filter((r) => r.correct).length;
 
     renderDiagram(svg, { neurons: state.neurons, activeRow: XOR_ROWS[state.activeRowIndex] });
-    renderHiddenPlane(hiddenPlaneSvg, { rows: XOR_ROWS, neurons: state.neurons });
+    renderRegionPlane(hiddenPlaneSvg, { rows: XOR_ROWS, neurons: state.neurons });
     if (diagramWrap) diagramWrap.dataset.activeView = state.diagramView;
     getElement("view-diagram-btn")?.classList.toggle("active", state.diagramView === "diagram");
-    getElement("view-hidden-plane-btn")?.classList.toggle("active", state.diagramView === "hidden-plane");
+    getElement("view-region-plane-btn")?.classList.toggle("active", state.diagramView === "region-plane");
     renderTable(rows);
     renderComputation(rows[state.activeRowIndex]);
 
