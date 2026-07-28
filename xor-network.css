@@ -44,10 +44,10 @@
   height: auto;
 }
 
-[data-role="diagram-wrap"][data-active-view="diagram"] [data-role="hidden-plane"] {
+[data-role="diagram-wrap"][data-active-view="diagram"] [data-role="region-plane"] {
   display: none;
 }
-[data-role="diagram-wrap"][data-active-view="hidden-plane"] [data-role="diagram"] {
+[data-role="diagram-wrap"][data-active-view="region-plane"] [data-role="diagram"] {
   display: none;
 }
 

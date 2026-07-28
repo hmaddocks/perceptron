@@ -291,6 +291,39 @@ body[data-active-view="plane"] #table-view {
   stroke-width: 3;
 }
 
+.plane-region-a {
+  fill: #9ca3af;
+  opacity: 0.18;
+}
+.plane-region-b {
+  fill: #2563eb;
+  opacity: 0.18;
+}
+
+.plane-hidden-boundary {
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  fill: none;
+}
+.plane-hidden-boundary.h1 {
+  stroke: #7c3aed;
+}
+.plane-hidden-boundary.h2 {
+  stroke: #d97706;
+}
+
+.plane-hidden-boundary-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.plane-hidden-boundary-label.h1 {
+  fill: #7c3aed;
+}
+.plane-hidden-boundary-label.h2 {
+  fill: #d97706;
+}
+
 .plane-point-label {
   font-size: 12px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
