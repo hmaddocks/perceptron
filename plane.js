@@ -19,25 +19,34 @@ function svgEl(tag, attrs) {
   return el;
 }
 
-// Endpoints of the line w1*x + w2*y + bias = 0, clipped to a generous range.
+// Endpoints of the line w1*x + w2*y + bias = 0, clipped to the domain square.
+// Finds where the (infinite) line crosses each of the square's 4 edges, then
+// keeps only the crossings that actually land within the square — evaluating
+// y at the two x-edges alone breaks down for steep lines (small w2 relative
+// to w1), which leave the square through its top/bottom edges instead.
 function boundaryEndpoints(perceptron) {
   const { w1, w2, bias } = perceptron;
-  const clamp = (v) => Math.max(-3, Math.min(3, v));
-  if (Math.abs(w2) > 1e-6) {
-    const yAt = (x) => -(w1 * x + bias) / w2;
-    return [
-      { x: DOMAIN_MIN, y: clamp(yAt(DOMAIN_MIN)) },
-      { x: DOMAIN_MAX, y: clamp(yAt(DOMAIN_MAX)) },
-    ];
+  const inRange = (v) => v >= DOMAIN_MIN - 1e-9 && v <= DOMAIN_MAX + 1e-9;
+  const points = [];
+
+  if (Math.abs(w2) > 1e-9) {
+    for (const x of [DOMAIN_MIN, DOMAIN_MAX]) {
+      const y = -(w1 * x + bias) / w2;
+      if (inRange(y)) points.push({ x, y });
+    }
   }
-  if (Math.abs(w1) > 1e-6) {
-    const x0 = -bias / w1;
-    return [
-      { x: x0, y: DOMAIN_MIN },
-      { x: x0, y: DOMAIN_MAX },
-    ];
+  if (Math.abs(w1) > 1e-9) {
+    for (const y of [DOMAIN_MIN, DOMAIN_MAX]) {
+      const x = -(w2 * y + bias) / w1;
+      if (inRange(x)) points.push({ x, y });
+    }
   }
-  return null;
+
+  const unique = points.filter(
+    (p, i) => !points.slice(0, i).some((q) => Math.abs(q.x - p.x) < 1e-6 && Math.abs(q.y - p.y) < 1e-6)
+  );
+  if (unique.length < 2) return null;
+  return [unique[0], unique[unique.length - 1]];
 }
 
 export function renderPlane(svg, { rows, perceptron, activeIndex }) {
@@ -69,8 +78,20 @@ export function renderPlane(svg, { rows, perceptron, activeIndex }) {
     if (magnitude > 1e-6) {
       const nx = w1 / magnitude;
       const ny = w2 / magnitude;
-      const midX = (a.x + b.x) / 2;
-      const midY = (a.y + b.y) / 2;
+
+      // Slide along the drawn segment (a to b) to the point nearest the
+      // canvas center, clamped so it can't slide past either endpoint. This
+      // keeps the badges on the visible line while pulling them toward the
+      // middle of the plane instead of the middle of the (possibly
+      // off-center) segment.
+      const canvasCenter = (DOMAIN_MIN + DOMAIN_MAX) / 2;
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const lengthSq = dx * dx + dy * dy;
+      const t = lengthSq > 1e-9 ? ((canvasCenter - a.x) * dx + (canvasCenter - a.y) * dy) / lengthSq : 0;
+      const tClamped = Math.max(0, Math.min(1, t));
+      const midX = a.x + tClamped * dx;
+      const midY = a.y + tClamped * dy;
       const offset = 0.15;
 
       const plus = toScreen(midX + nx * offset, midY + ny * offset);
@@ -78,12 +99,12 @@ export function renderPlane(svg, { rows, perceptron, activeIndex }) {
 
       svg.appendChild(svgEl("circle", { class: "plane-side-badge positive", cx: plus.px, cy: plus.py, r: 12 }));
       const plusLabel = svgEl("text", { class: "plane-side-label", x: plus.px, y: plus.py });
-      plusLabel.textContent = "+";
+      plusLabel.textContent = "1";
       svg.appendChild(plusLabel);
 
       svg.appendChild(svgEl("circle", { class: "plane-side-badge negative", cx: minus.px, cy: minus.py, r: 12 }));
       const minusLabel = svgEl("text", { class: "plane-side-label", x: minus.px, y: minus.py });
-      minusLabel.textContent = "−";
+      minusLabel.textContent = "0";
       svg.appendChild(minusLabel);
     }
   }
