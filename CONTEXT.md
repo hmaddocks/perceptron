@@ -32,10 +32,6 @@ _Avoid_: Graph, chart, canvas
 The straight line, shown in the Plane view, where the perceptron's weighted sum equals zero — the dividing line between the two output classes.
 _Avoid_: Separating line, threshold line
 
-**Decision-region plane**:
-The XOR Network page's second view (alongside the node/edge Diagram), shading every point of the input plane by the Network's predicted class, with the two Hidden neurons' individual boundary lines drawn on top — showing how their two half-plane cuts combine into the nonlinear region that makes XOR linearly separable at the Output neuron.
-_Avoid_: Graph, chart, canvas, heatmap
-
 **Row**:
 One of the 4 fixed input combinations, shown as a table row in the Truth table view or a point in the Plane view.
 _Avoid_: Point, entry, case
@@ -83,5 +79,9 @@ _Avoid_: Final layer, result neuron
 **Solution**:
 The pre-loaded, hand-crafted set of weights/biases for all 3 neurons that correctly solves XOR on all 4 rows. The page loads with the Solution active; a "Reset to solution" action restores it after the presenter has perturbed sliders away from it.
 _Avoid_: Preset, answer, correct weights
+
+**Decision-region plane**:
+The XOR Network page's second view (alongside the node/edge diagram), shading every point of the input plane by the Network's predicted class, with the two Hidden neurons' individual boundary lines drawn on top — showing how their two half-plane cuts combine into the nonlinear region that makes XOR linearly separable at the Output neuron.
+_Avoid_: Graph, chart, canvas, heatmap
 
 This page is always fixed to XOR — it has no Gate selector, unlike the main app.
