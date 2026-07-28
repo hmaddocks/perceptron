@@ -71,3 +71,85 @@ export function pointNearestCenter(a, b) {
   const tClamped = Math.max(0, Math.min(1, t));
   return { x: a.x + tClamped * dx, y: a.y + tClamped * dy };
 }
+
+const GRID_N = 32;
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+function drawHiddenLine(svg, perceptron, key) {
+  const boundary = boundaryEndpoints(perceptron);
+  if (!boundary) return;
+  const [a, b] = boundary;
+  const aScreen = toDomainScreen(a.x, a.y);
+  const bScreen = toDomainScreen(b.x, b.y);
+  svg.appendChild(
+    svgEl("line", { class: `plane-hidden-boundary ${key}`, x1: aScreen.px, y1: aScreen.py, x2: bScreen.px, y2: bScreen.py })
+  );
+
+  const labelPoint = pointNearestCenter(a, b);
+  const labelScreen = toDomainScreen(labelPoint.x, labelPoint.y);
+  const text = svgEl("text", {
+    class: `plane-hidden-boundary-label ${key}`,
+    x: labelScreen.px,
+    y: labelScreen.py - 8,
+  });
+  text.textContent = key;
+  svg.appendChild(text);
+}
+
+export function renderRegionPlane(svg, { rows, neurons }) {
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  const cellSize = 1 / GRID_N;
+  const cellPx = (cellSize / SPAN) * VIEWBOX_SIZE;
+  for (const cell of sampleGrid(neurons, GRID_N)) {
+    const corner = toDomainScreen(cell.x - cellSize / 2, cell.y + cellSize / 2);
+    svg.appendChild(
+      svgEl("rect", {
+        class: cell.cls === 0 ? "plane-region-a" : "plane-region-b",
+        x: corner.px,
+        y: corner.py,
+        width: cellPx,
+        height: cellPx,
+      })
+    );
+  }
+
+  const regionStart = toDomainScreen(0, 1);
+  const regionEnd = toDomainScreen(1, 0);
+  svg.appendChild(
+    svgEl("rect", {
+      class: "plane-active-region",
+      x: regionStart.px,
+      y: regionStart.py,
+      width: regionEnd.px - regionStart.px,
+      height: regionEnd.py - regionStart.py,
+    })
+  );
+
+  drawHiddenLine(svg, neurons.h1, "h1");
+  drawHiddenLine(svg, neurons.h2, "h2");
+
+  for (const [x1, x2, expected] of rows) {
+    const { out } = computeNetwork(neurons, x1, x2);
+    const correct = out.output === expected;
+    const { px, py } = toDomainScreen(x1, x2);
+
+    svg.appendChild(
+      svgEl("circle", {
+        class: `plane-point ${expected === 0 ? "class-a" : "class-b"} ${correct ? "correct" : "misclassified"}`,
+        cx: px,
+        cy: py,
+        r: 11,
+      })
+    );
+
+    const label = svgEl("text", { class: "plane-point-label", x: px, y: py - 18 });
+    label.textContent = `(${x1}, ${x2})`;
+    svg.appendChild(label);
+  }
+}
