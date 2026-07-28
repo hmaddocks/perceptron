@@ -1,5 +1,6 @@
 import { XOR_ROWS, SOLUTION, computeNetwork, cloneNeurons } from "./xor-network-model.js";
 import { renderDiagram } from "./xor-network-diagram.js";
+import { renderHiddenPlane } from "./xor-hidden-plane.js";
 
 const NEURON_KEYS = ["h1", "h2", "out"];
 const WEIGHT_FIELDS = ["w1", "w2", "bias"];
@@ -12,6 +13,7 @@ export function createController(root) {
   const state = {
     neurons: cloneNeurons(SOLUTION),
     activeRowIndex: 0,
+    diagramView: "diagram",
   };
 
   function format(n) {
@@ -55,6 +57,17 @@ export function createController(root) {
   }
 
   getElement("reset-btn")?.addEventListener("click", resetToSolution);
+
+  const diagramWrap = getElement("diagram-wrap");
+  const hiddenPlaneSvg = getElement("hidden-plane");
+
+  function setDiagramView(view) {
+    state.diagramView = view;
+    render();
+  }
+
+  getElement("view-diagram-btn")?.addEventListener("click", () => setDiagramView("diagram"));
+  getElement("view-hidden-plane-btn")?.addEventListener("click", () => setDiagramView("hidden-plane"));
 
   function computeAllRows() {
     return XOR_ROWS.map(([x1, x2, expected]) => {
@@ -115,6 +128,10 @@ export function createController(root) {
     const correctCount = rows.filter((r) => r.correct).length;
 
     renderDiagram(svg, { neurons: state.neurons, activeRow: XOR_ROWS[state.activeRowIndex] });
+    renderHiddenPlane(hiddenPlaneSvg, { rows: XOR_ROWS, neurons: state.neurons });
+    if (diagramWrap) diagramWrap.dataset.activeView = state.diagramView;
+    getElement("view-diagram-btn")?.classList.toggle("active", state.diagramView === "diagram");
+    getElement("view-hidden-plane-btn")?.classList.toggle("active", state.diagramView === "hidden-plane");
     renderTable(rows);
     renderComputation(rows[state.activeRowIndex]);
 
