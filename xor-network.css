@@ -44,6 +44,13 @@
   height: auto;
 }
 
+[data-role="diagram-wrap"][data-active-view="diagram"] [data-role="hidden-plane"] {
+  display: none;
+}
+[data-role="diagram-wrap"][data-active-view="hidden-plane"] [data-role="diagram"] {
+  display: none;
+}
+
 .truth-table td.correct {
   color: var(--correct);
   font-weight: 700;
