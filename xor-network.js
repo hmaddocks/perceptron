@@ -29,8 +29,13 @@ function neuronPanel(title, key) {
 const TEMPLATE = `
   <div class="network-app">
     <div class="network-main">
-      <div class="diagram-wrap">
+      <div class="diagram-wrap" data-role="diagram-wrap">
+        <nav class="view-menu">
+          <button type="button" data-view="diagram" data-role="view-diagram-btn">Diagram</button>
+          <button type="button" data-view="hidden-plane" data-role="view-hidden-plane-btn">Hidden-activation plane</button>
+        </nav>
         <svg data-role="diagram" viewBox="0 0 500 400"></svg>
+        <svg data-role="hidden-plane" viewBox="0 0 400 400"></svg>
       </div>
 
       <table class="truth-table">
