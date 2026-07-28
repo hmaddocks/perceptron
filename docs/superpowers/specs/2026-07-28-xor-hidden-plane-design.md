@@ -12,7 +12,7 @@ In scope: the hidden-activation plane for the Output neuron only (the `(h1out, h
 
 ## New file: `xor-hidden-plane.js`
 
-Exports one function:
+The controller-facing entry point is:
 
 ```js
 renderHiddenPlane(svg, { rows, neurons })
@@ -20,6 +20,8 @@ renderHiddenPlane(svg, { rows, neurons })
 
 - `rows` — `XOR_ROWS`, the 4 `[x1, x2, expected]` triples.
 - `neurons` — `state.neurons` (`h1`, `h2`, `out`).
+
+The file also exports its internal pure-logic helpers (`boundaryEndpoints`, `toDomainScreen`, `groupByCorner`, `jitterOffsets`) even though only `renderHiddenPlane` is consumed elsewhere. This project has no test framework (ADR-0001), so these exports are what let implementation verify the corner-grouping/jitter/clipping math against the real shipped code with small Node scripts, rather than duplicating that logic into throwaway scratch scripts the way the `plane.js` boundary-clipping bug was diagnosed earlier. `renderHiddenPlane` itself still can't be exercised this way (it needs `document.createElementNS`), so its correctness is confirmed by manual browser check instead.
 
 Behavior:
 
@@ -82,7 +84,7 @@ Duplicated from the (already fixed) `plane.js` logic:
 - `render()` always renders both SVGs unconditionally (cheap — 4 points) and sets `diagramWrap.dataset.activeView = state.diagramView`; CSS handles show/hide. This matches the existing AND/OR page pattern (`body[data-active-view]`) and keeps `render()` simple rather than conditionally skipping a render pass.
 - Import and call `renderHiddenPlane(hiddenPlaneSvg, { rows: XOR_ROWS, neurons: state.neurons })` alongside the existing `renderDiagram` call.
 
-**`xor-network.css`** — a `.view-menu` ruleset scoped to this page (duplicated from `style.css`'s, since `xor-network.html` doesn't currently link `style.css`), plus:
+**`xor-network.css`** — `xor-network.html` already links `style.css`, which already defines an unscoped `.view-menu` ruleset (used by the AND/OR page's toggle) that applies here automatically once the markup matches; only the new show/hide rule is needed:
 
 ```css
 [data-active-view="diagram"] [data-role="hidden-plane"] { display: none; }
@@ -95,4 +97,11 @@ Add a `CONTEXT.md` entry for **Hidden-activation plane**: the XOR Network page's
 
 ## Testing
 
-No test framework exists in this project (plain vanilla JS, no build step — ADR-0001). Verification is manual: load `xor-network.html`, toggle to the new view, and check against the canonical `SOLUTION` weights (h1 ≈ OR, h2 ≈ NAND) that all 4 points render at distinct corners with correct colors/rings and the boundary separates them; then perturb sliders to force a collision (e.g. zero out h1's weights) and confirm colliding rows render as a small jittered cluster rather than overlapping silently.
+No test framework exists in this project (plain vanilla JS, no build step — ADR-0001). Verification is manual: load `xor-network.html`, toggle to the new view, and check against the canonical `SOLUTION` weights (`h1 = Perceptron(1, 1, -0.5)`, `h2 = Perceptron(-1, -1, 1.5)`) that:
+
+- `(0,0)` maps to hidden point `(0,1)` — alone at that corner.
+- `(0,1)` and `(1,0)` both map to hidden point `(1,1)` — a 2-member group, rendered as a small jittered pair, both `expected=1` and both correctly classified (same color, both ringed `correct`).
+- `(1,1)` maps to hidden point `(1,0)` — alone at that corner.
+- The Output neuron's boundary separates `(1,1)`'s group (expected 1) from the other two corners (expected 0).
+
+Then perturb sliders to force a same-corner collision between *different*-class rows (e.g. zero out h1's weights so `h1out` is constant) and confirm those rows render as a jittered cluster with mismatched colors/rings rather than overlapping silently into one dot.
